@@ -4,13 +4,11 @@ import { getEngine } from "@/lib/audio/engine";
 import { PIANO_KEY_MAP } from "@/lib/audio/keys";
 import { loadPersisted, useStudio, watchPersist } from "@/lib/store";
 import { applyAccent } from "@/lib/theme";
-import { ClimatePanel } from "./ClimatePanel";
 import { Gate } from "./Gate";
 import { HelpDialog } from "./HelpDialog";
 import { Mixer } from "./Mixer";
 import { Pads } from "./Pads";
 import { PianoRoll } from "./PianoRoll";
-import { ReferencesPanel } from "./ReferencesPanel";
 import { Sequencer } from "./Sequencer";
 import { SettingsPanel } from "./SettingsPanel";
 import { Transport } from "./Transport";
@@ -82,8 +80,6 @@ function StudioShell() {
         {view === "piano" ? <PianoRoll /> : null}
         {view === "pads" ? <Pads /> : null}
         {view === "mix" ? <Mixer /> : null}
-        {view === "clima" ? <ClimatePanel /> : null}
-        {view === "refs" ? <ReferencesPanel /> : null}
       </main>
       <HelpDialog open={help} onClose={() => setHelp(false)} />
       <Toaster
