@@ -1,7 +1,9 @@
-import { HelpCircle, Pause, Play, Settings2, Square } from "lucide-react";
+import { Download, HelpCircle, Pause, Play, Settings2, Square } from "lucide-react";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { getEngine } from "@/lib/audio/engine";
+import { downloadWav, exportStudioWav } from "@/lib/audio/export";
 import { useStudio } from "@/lib/store";
 import { cn } from "@/lib/utils";
 import { HelixMark } from "./HelixMark";
@@ -35,6 +37,7 @@ export function Transport({ onHelp, onSettings }: Props) {
   const setView = useStudio((s) => s.setView);
   const setCoverArt = useStudio((s) => s.setCoverArt);
   const [bpmDraft, setBpmDraft] = useState(String(bpm));
+  const [exporting, setExporting] = useState(false);
 
   useEffect(() => {
     setBpmDraft(String(bpm));
@@ -51,6 +54,29 @@ export function Transport({ onHelp, onSettings }: Props) {
       return;
     }
     setBpm(n);
+  }
+
+  async function handleExport() {
+    if (exporting) return;
+    setExporting(true);
+    const state = useStudio.getState();
+    try {
+      const blob = await exportStudioWav({
+        projectName: state.projectName,
+        bpm: state.bpm,
+        swing: state.swing,
+        masterVolume: state.masterVolume,
+        channels: state.channels,
+        pianoNotes: state.pianoNotes,
+      });
+      downloadWav(blob, state.projectName);
+      toast.success("Exportación WAV lista");
+    } catch (error) {
+      console.error("No se pudo exportar el audio", error);
+      toast.error("No se pudo exportar el audio. Inténtalo de nuevo.");
+    } finally {
+      setExporting(false);
+    }
   }
 
   function togglePlay() {
@@ -122,6 +148,10 @@ export function Transport({ onHelp, onSettings }: Props) {
             onClick={() => getEngine().stop()}
           >
             <Square className="size-3.5" />
+          </Button>
+          <Button size="sm" variant="secondary" onClick={handleExport} disabled={exporting} aria-label="Exportar música como WAV">
+            <Download className="size-3.5" />
+            {exporting ? "Exportando…" : "Exportar WAV"}
           </Button>
           <label className="flex items-center gap-1 rounded-[var(--radius-sm)] border border-border bg-elevated px-2 py-1">
             <span className="text-[10px] uppercase tracking-wider text-faint">BPM</span>
