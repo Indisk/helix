@@ -14,8 +14,6 @@ const VIEWS = [
   { id: "piano", label: "Piano" },
   { id: "pads", label: "Pads" },
   { id: "mix", label: "Mix" },
-  { id: "clima", label: "Clima" },
-  { id: "refs", label: "Refs" },
 ] as const;
 
 type Props = {
